@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL Shortener - CuT-IT</title>
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="css/index.css">
     
     
 </head>
@@ -22,9 +22,9 @@
         <div class="box2">
             <div class="urlBox">
                 
-                <input style="font-family: FontAwesome;" type="text"  placeholder="  Enter Your URL"> 
+                <input style="font-family: FontAwesome;" class="input" type="text"  placeholder="  Enter Your URL"> 
                 
-                <button class="btn"> <i class="fas fa-cut"></i> CuT-IT</button>
+                <button class="btn" onclick=grabber()> <i class="fas fa-cut"></i> CuT-IT</button>
                 
                 
             </div>
@@ -32,5 +32,56 @@
         </div>
     </div>
     <script src="https://kit.fontawesome.com/3414cae6ee.js" crossorigin="anonymous"></script>
+    <script type="text/javascript"> function grabber(){
+    	if(document.getElementsByClassName('input')[0].value == ''){
+            document.getElementsByClassName('input')[0].placeholder="Don't Leave Me Blank :(";
+        }
+        else if(isUrlValid(document.getElementsByClassName('input')[0].value)){
+    	var xmlHttp = new XMLHttpRequest();
+    	xmlHttp.open( "POST", "/cutit/short/", false );
+        var r,data;
+        var r,data = isUrlValid(document.getElementsByClassName('input')[0].value);
+    	xmlHttp.send(data);
+    	var response = xmlHttp.responseText
+    	document.getElementsByClassName('input')[0].value=response;
+        var mytext = document.getElementsByClassName('input')[0].value;
+        var fullLink = document.createElement('input');
+        document.body.appendChild(fullLink);
+        fullLink.value = mytext;
+        fullLink.select();
+        document.execCommand("copy", false);
+        fullLink.remove();
+        document.getElementsByClassName("btn")[0].innerText = "Link Copied"
+
+    }
+    	else{
+    		document.getElementsByClassName('input')[0].value='';
+    		document.getElementsByClassName('input')[0].placeholder="Incorrect Url Please Correct it !";
+    	}
+    }
+    
+    function isUrlValid(userInput) {
+        for (i = 0; i < userInput.length; i++) {
+            if(userInput[0] == '/'){
+                userInput = userInput.substring(1)
+        }
+            else if(userInput[0] != '/'){
+                break;
+            }
+        }
+        var patt = /(http|https)/i;
+        if(userInput.match(patt) == null){
+            userInput = 'http://' + userInput;
+            
+        }
+        var res = userInput.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+        if(res == null)
+            return false;
+        else
+            return true,userInput;
+    }
+
+
+    </script>
 </body>
 </html>
